@@ -1,8 +1,9 @@
-import { Box, Button, Grid, TextField } from '@mui/material';
+import { Box, Button, Divider, Grid, TextField } from '@mui/material';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import jwtDecode from 'jwt-decode';
+import { UserEvaluationsListResults } from '../components/users/user-evaluations-list-results';
 
 export default function Index(){
   const router = useRouter()
@@ -11,6 +12,7 @@ export default function Index(){
 
   const [tokenValue, setTokenValue] = useState("")
   const [displayAdminButton, setDisplayAdminButton] = useState(false)
+  const [userEvaluations, setUserEvaluations] = useState([])
 
   function logoutUser(){
     removeCookie(['user_token'])
@@ -25,9 +27,33 @@ export default function Index(){
     }
   }
 
+  function getUserEvaluations(){
+    const axios = require('axios');
+    let config = {
+      method: 'get',
+      url: '/api/users/getEvaluations',
+      headers: {
+        'Authorization': 'Bearer ' + cookies.user_token
+      }
+    };
+
+    axios(config)
+      .then(function (response) {
+        const allResponse = response.data
+        setUserEvaluations(allResponse['all_evaluations'])
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+  }
+
   useEffect(() => {
     if (firstLoad){
       checkJWTRole()
+      if (cookies.user_token !== "" && typeof cookies.user_token !== 'undefined'){
+        getUserEvaluations()
+      }
       setFirstLoad(false)
     }
   })
@@ -66,7 +92,7 @@ export default function Index(){
             <br/>
             <Box textAlign='center'>
               <Button variant="contained"
-                      onClick={() => router.push("/login").then()}>Σύνδεση</Button>,
+                      onClick={() => router.push("/login").then()}>Σύνδεση</Button>
               <Button variant="contained"
                       onClick={() => router.push("/register").then()}>Εγγραφή</Button>
             </Box>
@@ -133,6 +159,36 @@ export default function Index(){
             <Button variant="contained"
                     onClick={() => router.push("/evaluation/" + tokenValue).then()}>Ξεκινήστε την Αξιολόγηση</Button>
           </Box>
+          <br/>
+          <Divider/>
+        </Grid>
+        <Grid
+          item
+          md={2}
+          xs={12}
+        >
+        </Grid>
+        <Grid
+          item
+          md={8}
+          xs={12}
+        >
+          <Box sx={{ mt: 3 }}>
+            <h3 style={{textAlign:"center"}}>Οι Αξιολογήσεις που έχετε κάνει ως τώρα:</h3>
+            <br/>
+            {userEvaluations.length !== 0 &&
+              <UserEvaluationsListResults allEvaluations={userEvaluations}/>
+            }
+            {userEvaluations.length === 0 &&
+              <h4 style={{textAlign:"center"}}>Δεν υπάρχουν αξιολογήσεις ακόμα.</h4>
+            }
+          </Box>
+        </Grid>
+        <Grid
+          item
+          md={2}
+          xs={12}
+        >
         </Grid>
       </Grid>
     </>
