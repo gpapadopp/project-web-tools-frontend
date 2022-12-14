@@ -92,9 +92,9 @@ export default function Index(){
             <br/>
             <Box textAlign='center'>
               <Button variant="contained"
-                      onClick={() => router.push("/login").then()}>Σύνδεση</Button>
+                      onClick={() => router.push("/login").then()} style={{marginRight: "1%"}}>Σύνδεση</Button>
               <Button variant="contained"
-                      onClick={() => router.push("/register").then()}>Εγγραφή</Button>
+                      onClick={() => router.push("/register").then()} style={{marginLeft: "1%"}}>Εγγραφή</Button>
             </Box>
           </Grid>
         </Grid>
