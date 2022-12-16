@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import jwtDecode from 'jwt-decode';
 import { UserEvaluationsListResults } from '../components/users/user-evaluations-list-results';
+import { isJwtExpired } from 'jwt-check-expiration';
 
 export default function Index(){
   const router = useRouter()
@@ -55,6 +56,11 @@ export default function Index(){
         getUserEvaluations()
       }
       setFirstLoad(false)
+    }
+    if (cookies.user_token !== "" && typeof cookies.user_token !== 'undefined') {
+      if (isJwtExpired(cookies.user_token)) {
+        logoutUser()
+      }
     }
   })
 
