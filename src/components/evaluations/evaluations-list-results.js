@@ -31,50 +31,69 @@ export const EvaluationsListResults = ({ allEvaluations, ...rest }) => {
                   Μάθημα
                 </TableCell>
                 <TableCell>
+                  Τύπος Μαθήματος
+                </TableCell>
+                <TableCell>
                   Μ.Ο. Αξιολόγησης
                 </TableCell>
                 <TableCell>
                   Μοναδικός Κωδικός
                 </TableCell>
+                <TableCell>
+                  Ημερομηνία Υποβολής
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {allEvaluations.map((evaluation) => (
-                <TableRow
-                  hover
-                  key={evaluation.id}
-                >
-                  <TableCell>
-                    {evaluation.id}
-                  </TableCell>
-                  <TableCell>
-                    {evaluation.is_done &&
-                      <CheckIcon/>
-                    }
-                    {!evaluation.is_done &&
-                      <CloseIcon/>
-                    }
-                  </TableCell>
-                  <TableCell>
-                    {evaluation.course.name}
-                  </TableCell>
-                  <TableCell>
-                    {evaluation.average === null &&
-                      <>
-                      -
-                      </>
-                    }
-                    {evaluation.average !== null &&
-                      <>
-                        {evaluation.average}
-                      </>
-                    }
-                  </TableCell>
-                  <TableCell>
-                    {evaluation.token}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {allEvaluations.map((evaluation) => {
+                const createdDate = new Date(Date.parse(evaluation.created_at))
+                const createdDateString = createdDate.getDate().toString() + "/" + (createdDate.getMonth() + 1).toString() + "/" + createdDate.getFullYear().toString()
+                return (
+                  <>
+                    <TableRow
+                      hover
+                      key={evaluation.id}
+                    >
+                      <TableCell>
+                        {evaluation.id}
+                      </TableCell>
+                      <TableCell>
+                        {evaluation.is_done &&
+                          <CheckIcon/>
+                        }
+                        {!evaluation.is_done &&
+                          <CloseIcon/>
+                        }
+                      </TableCell>
+                      <TableCell>
+                        {evaluation.course.name}
+                      </TableCell>
+                      <TableCell>
+                        {evaluation.course.course_type.name}
+                      </TableCell>
+                      <TableCell>
+                        {evaluation.average === null &&
+                          <>
+                            -
+                          </>
+                        }
+                        {evaluation.average !== null &&
+                          <>
+                            {evaluation.average}
+                          </>
+                        }
+                      </TableCell>
+                      <TableCell>
+                        {evaluation.token}
+                      </TableCell>
+                      <TableCell>
+                        {createdDateString}
+                      </TableCell>
+                    </TableRow>
+                  </>
+                )
+              }
+              )}
             </TableBody>
           </Table>
         </Box>
