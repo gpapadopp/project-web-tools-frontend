@@ -135,6 +135,35 @@ function Evaluations() {
       });
   }
 
+  function searchEvaluationsByCourseType(courseTypeID){
+    setDisplaySearch(true)
+    const axios = require('axios');
+    const qs = require('qs');
+    let data = qs.stringify({
+      'course_type_id': courseTypeID ,
+    });
+    let config = {
+      method: 'post',
+      url: '/api/evaluations/getByCourseType',
+      headers: {
+        'Authorization': 'Bearer ' + cookies.user_token,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      data : data
+    };
+
+    console.log(config);
+    axios(config)
+      .then(function (response) {
+        const allResponse = response.data
+        setAllEvaluations(allResponse['evaluations'])
+        setDisplaySearch(false)
+      })
+      .catch(function (error) {
+        setDisplaySearch(false)
+      });
+  }
+
   return (
     <>
       <Head>
@@ -153,6 +182,7 @@ function Evaluations() {
           <SearchButtons
             dateSearchCallBack={searchEvaluationsByDate}
             courseSearchCallBack={searchEvaluationsByCourse}
+            courseTypeSearchCallBack={searchEvaluationsByCourseType}
           />
           <br/>
           <Divider/>

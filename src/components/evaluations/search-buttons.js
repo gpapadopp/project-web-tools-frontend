@@ -2,10 +2,12 @@ import { Button, Grid, Typography } from '@mui/material';
 import { useState } from 'react';
 import DateChooser from '../dialogs/evaluations/date-chooser';
 import CourseSearch from '../dialogs/evaluations/course-search';
+import CourseTypeSearch from '../dialogs/evaluations/course-type-search';
 
-export default function SearchButtons({dateSearchCallBack, courseSearchCallBack}){
+export default function SearchButtons({dateSearchCallBack, courseSearchCallBack, courseTypeSearchCallBack}){
   const [dateSearch, setDateSearch] = useState(false)
   const [courseSearch, setCourseSearch] = useState(false)
+  const [courseTypeSearch, setCourseTypeSearch] = useState(false)
 
   function dateSearchFunction(startDate, endDate){
     setDateSearch(false)
@@ -15,6 +17,11 @@ export default function SearchButtons({dateSearchCallBack, courseSearchCallBack}
   function courseSearchFunction(courseID){
     setCourseSearch(false)
     courseSearchCallBack.call(this, courseID)
+  }
+
+  function courseTypeSearchFunction(courseTypeID){
+    setCourseTypeSearch(false)
+    courseTypeSearchCallBack.call(this, courseTypeID)
   }
 
   return (
@@ -66,6 +73,7 @@ export default function SearchButtons({dateSearchCallBack, courseSearchCallBack}
             color="primary"
             variant="contained"
             fullWidth={true}
+            onClick={() => setCourseTypeSearch(true)}
           >
             Τύπος Μαθήματος
           </Button>
@@ -81,6 +89,12 @@ export default function SearchButtons({dateSearchCallBack, courseSearchCallBack}
         <CourseSearch
           onClose={() => setCourseSearch(false)}
           onSearch={courseSearchFunction}
+        />
+      }
+      {courseTypeSearch &&
+        <CourseTypeSearch
+          onClose={() => setCourseTypeSearch(false)}
+          onSearch={courseTypeSearchFunction}
         />
       }
     </>
