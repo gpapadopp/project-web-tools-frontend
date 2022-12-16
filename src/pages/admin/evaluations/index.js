@@ -8,6 +8,8 @@ import { EvaluationsListResults } from '../../../components/evaluations/evaluati
 import jwtDecode from 'jwt-decode';
 import { useRouter } from 'next/router';
 import SearchButtons from '../../../components/evaluations/search-buttons';
+import qs from 'qs';
+import axios from 'axios';
 
 function Evaluations() {
   const [allEvaluations, setAllEvaluations] = useState([])
@@ -102,7 +104,35 @@ function Evaluations() {
       .catch(function (error) {
         setDisplaySearch(false)
       });
+  }
 
+  function searchEvaluationsByCourse(courseID){
+    setDisplaySearch(true)
+    const axios = require('axios');
+    const qs = require('qs');
+    let data = qs.stringify({
+      'course_id': courseID ,
+    });
+    let config = {
+      method: 'post',
+      url: '/api/evaluations/getByCourse',
+      headers: {
+        'Authorization': 'Bearer ' + cookies.user_token,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      data : data
+    };
+
+    console.log(config);
+    axios(config)
+      .then(function (response) {
+        const allResponse = response.data
+        setAllEvaluations(allResponse['evaluations'])
+        setDisplaySearch(false)
+      })
+      .catch(function (error) {
+        setDisplaySearch(false)
+      });
   }
 
   return (
@@ -122,6 +152,7 @@ function Evaluations() {
         <Container maxWidth={false}>
           <SearchButtons
             dateSearchCallBack={searchEvaluationsByDate}
+            courseSearchCallBack={searchEvaluationsByCourse}
           />
           <br/>
           <Divider/>
