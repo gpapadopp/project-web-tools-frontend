@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { Box, Container } from '@mui/material';
+import { Box, Button, Container, Divider, Grid, LinearProgress, Typography } from '@mui/material';
 import { DashboardLayout } from '../../../components/dashboard-layout';
 import { useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
@@ -7,11 +7,14 @@ import EvaluationsListToolbar from '../../../components/evaluations/evaluations-
 import { EvaluationsListResults } from '../../../components/evaluations/evaluations-list-results';
 import jwtDecode from 'jwt-decode';
 import { useRouter } from 'next/router';
+import SearchButtons from '../../../components/evaluations/search-buttons';
 
 function Evaluations() {
   const [allEvaluations, setAllEvaluations] = useState([])
   const [firstLoad, setFirstLoad] = useState(true)
   const [cookies, setCookie, removeCookie] = useCookies(['user_token']);
+  const [displaySearch, setDisplaySearch] = useState(false)
+
   const router = useRouter()
 
   function getAllEvaluations(){
@@ -53,6 +56,55 @@ function Evaluations() {
     }
   })
 
+  function generateDateString(date){
+    const currentDate = new Date(Date.parse(date))
+    let returnDate = ""
+    returnDate += currentDate.getFullYear().toString()
+    if ((currentDate.getMonth() + 1) < 10){
+      returnDate += "-0" + (currentDate.getMonth() + 1).toString()
+    } else {
+      returnDate += "-" + (currentDate.getMonth() + 1).toString()
+    }
+
+    if (currentDate.getDate() < 10){
+      returnDate += "-0" + currentDate.getDate().toString()
+    } else {
+      returnDate += "-" + currentDate.getDate().toString()
+    }
+    return returnDate;
+  }
+
+  function searchEvaluationsByDate(startDate, endDate){
+    setDisplaySearch(true)
+    const axios = require('axios');
+    const qs = require('qs');
+    let data = qs.stringify({
+      'start_date': generateDateString(startDate) + " 00:00:00" ,
+      'end_date': generateDateString(endDate) + " 00:00:00"
+    });
+    let config = {
+      method: 'post',
+      url: '/api/evaluations/getByDate',
+      headers: {
+        'Authorization': 'Bearer ' + cookies.user_token,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      data : data
+    };
+
+    console.log(config);
+    axios(config)
+      .then(function (response) {
+        const allResponse = response.data
+        setAllEvaluations(allResponse['evaluations'])
+        setDisplaySearch(false)
+      })
+      .catch(function (error) {
+        setDisplaySearch(false)
+      });
+
+  }
+
   return (
     <>
       <Head>
@@ -68,9 +120,28 @@ function Evaluations() {
         }}
       >
         <Container maxWidth={false}>
+          <SearchButtons
+            dateSearchCallBack={searchEvaluationsByDate}
+          />
+          <br/>
+          <Divider/>
+          <br/>
+          {displaySearch &&
+            <LinearProgress />
+          }
           <EvaluationsListToolbar/>
           <Box sx={{ mt: 3 }}>
-            <EvaluationsListResults allEvaluations={allEvaluations}/>
+            {allEvaluations.length !== 0 &&
+              <EvaluationsListResults allEvaluations={allEvaluations}/>
+            }
+            {allEvaluations.length === 0 &&
+              <Typography
+                sx={{ m: 1, textAlign: "center" }}
+                variant="h6"
+              >
+                Δεν υπάρχουν αξιολογήσεις
+              </Typography>
+            }
           </Box>
         </Container>
       </Box>
