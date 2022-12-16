@@ -7,7 +7,7 @@ import {
   TableBody,
   TableCell,
   TableHead,
-  TableRow
+  TableRow, Tooltip
 } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
@@ -25,7 +25,7 @@ export const EvaluationsListResults = ({ allEvaluations, ...rest }) => {
                   ID
                 </TableCell>
                 <TableCell>
-                  Όνομα
+                  Κατάσταση
                 </TableCell>
                 <TableCell>
                   Μάθημα
@@ -59,10 +59,14 @@ export const EvaluationsListResults = ({ allEvaluations, ...rest }) => {
                       </TableCell>
                       <TableCell>
                         {evaluation.is_done &&
-                          <CheckIcon/>
+                          <Tooltip title={"Ολοκληρωμένη"} placement={"top"}>
+                            <CheckIcon/>
+                          </Tooltip>
                         }
                         {!evaluation.is_done &&
-                          <CloseIcon/>
+                          <Tooltip title={"Μη-Ολοκληρωμένη"} placement={"top"}>
+                            <CloseIcon/>
+                          </Tooltip>
                         }
                       </TableCell>
                       <TableCell>
