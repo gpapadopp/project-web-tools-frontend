@@ -91,14 +91,12 @@ export const DashboardSidebar = (props) => {
               href="/"
               passHref
             >
-              <a>
-                <Logo
-                  sx={{
-                    height: 42,
-                    width: 42
-                  }}
-                />
-              </a>
+              <Typography
+                variant={"h6"}
+                sx={{margin: "auto", textAlign: "center"}}
+              >
+                Σύστημα Αξιολόγησης Τριτοβάθμιας Εκπαίδευσης
+              </Typography>
             </NextLink>
           </Box>
         </div>
